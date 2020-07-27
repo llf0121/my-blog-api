@@ -1,7 +1,4 @@
 <?php
-
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -12,19 +9,29 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+$api = app('Dingo\Api\Routing\Router');
+$api->version('v1', [
+    'namespace'  => 'App\Http\Controllers',
+    'middleware' => ['api'],
+    'prefix'     => 'api',
+],
+    function($api){
+        //文章
+        $api->group(['namespace' => 'Articles'], function ($api) {
+            $api->get('/articles', 'ArticlesController@index')->name('api.articles.index');
+            $api->post('/articles', 'ArticlesController@store');
+            $api->get('/articles/{article}', 'ArticlesController@show');
+            $api->get('/articles/{article}/edit', 'ArticlesController@edit');
+            $api->put('/articles/{article}', 'ArticlesController@update');
+        });
+        //标签
+        $api->group(['namespace' => 'Tags'], function ($api) {
+            $api->get('/tags', 'TagsController@index');
+            $api->post('/tags', 'TagsController@store');
+        });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+    }
+);
 
-//文章
-Route::namespace('Articles')->group(function (){
-    Route::get('/articles','ArticlesController@index');
-    Route::post('/articles','ArticlesController@store');
-});
 
-//标签
-Route::namespace('Tags')->group(function (){
-    Route::get('/tags','TagsController@index');
-    Route::post('/tags','TagsController@store');
-});
+

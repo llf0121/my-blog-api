@@ -13,5 +13,4 @@ class TagService
             return $new_tag;
         });
     }
-
 }
